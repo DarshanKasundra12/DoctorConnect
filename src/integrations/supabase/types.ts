@@ -61,6 +61,63 @@ export type Database = {
           },
         ]
       }
+      calls: {
+        Row: {
+          call_duration: number | null
+          call_notes: string | null
+          call_outcome: string | null
+          call_type: string
+          created_at: string
+          id: string
+          patient_id: string | null
+          appointment_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          call_duration?: number | null
+          call_notes?: string | null
+          call_outcome?: string | null
+          call_type?: string
+          created_at?: string
+          id?: string
+          patient_id?: string | null
+          appointment_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          call_duration?: number | null
+          call_notes?: string | null
+          call_outcome?: string | null
+          call_type?: string
+          created_at?: string
+          id?: string
+          patient_id?: string | null
+          appointment_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calls_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           content: string

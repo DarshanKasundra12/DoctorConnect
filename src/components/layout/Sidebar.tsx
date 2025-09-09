@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
-  Calendar, 
+  Phone, 
   Users, 
   FileText, 
   CreditCard, 
@@ -24,7 +24,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { title: 'Dashboard', href: '/dashboard', icon: Home },
-  { title: 'Appointments', href: '/appointments', icon: Calendar },
+  { title: 'Calls', href: '/calls', icon: Phone },
   { title: 'Patients', href: '/patients', icon: Users },
   { title: 'Prescriptions', href: '/prescriptions', icon: FileText },
   { title: 'Billing', href: '/billing', icon: CreditCard },

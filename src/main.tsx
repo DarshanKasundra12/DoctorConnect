@@ -8,7 +8,7 @@ import { AuthProvider, useAuth } from '@/components/auth/AuthProvider';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
-import Appointments from './pages/Appointments';
+import Calls from './pages/Calls';
 import Patients from './pages/Patients';
 import Prescriptions from './pages/Prescriptions';
 import Billing from './pages/Billing';
@@ -61,7 +61,7 @@ const App = () => {
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/appointments" element={<Appointments />} />
+                  <Route path="/calls" element={<Calls />} />
                   <Route path="/patients" element={<Patients />} />
                   <Route path="/prescriptions" element={<Prescriptions />} />
                   <Route path="/billing" element={<Billing />} />
