@@ -115,26 +115,26 @@ const Patients = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Patients</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Patients</h1>
           <p className="text-muted-foreground">
             Manage your patient records and information
           </p>
         </div>
         
-        <Button className="flex items-center gap-2" onClick={handleAddNew}>
+        <Button className="flex items-center gap-2 w-full sm:w-auto" onClick={handleAddNew}>
           <Plus className="h-4 w-4" />
           Add New Patient
         </Button>
       </div>
 
       {/* Search and Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="md:col-span-3">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-4">
+        <Card className="lg:col-span-3">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Search className="h-5 w-5 text-muted-foreground" />
+              <Search className="h-5 w-5 text-muted-foreground flex-shrink-0" />
               <Input
                 placeholder="Search patients by name, email, or phone..."
                 value={searchTerm}
@@ -186,21 +186,21 @@ const Patients = () => {
           ) : (
             <div className="grid gap-4">
               {filteredPatients.map((patient) => (
-                <div key={patient.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <div key={patient.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors gap-4">
+                  <div className="flex items-center space-x-4 flex-1 min-w-0">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <span className="text-primary font-semibold text-lg">
                         {patient.full_name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     
-                    <div>
-                      <h3 className="font-semibold">{patient.full_name}</h3>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        {patient.email && <span>{patient.email}</span>}
-                        {patient.phone && <span>{patient.phone}</span>}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold truncate">{patient.full_name}</h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm text-muted-foreground">
+                        {patient.email && <span className="truncate">{patient.email}</span>}
+                        {patient.phone && <span className="truncate">{patient.phone}</span>}
                         {patient.gender && (
-                          <Badge variant="outline">
+                          <Badge variant="outline" className="w-fit">
                             {patient.gender}
                           </Badge>
                         )}
@@ -211,18 +211,18 @@ const Patients = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
+                  <div className="flex items-center justify-end sm:justify-start space-x-2">
+                    <Button variant="outline" size="sm" className="flex-shrink-0">
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit(patient)}>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(patient)} className="flex-shrink-0">
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm" 
                       onClick={() => handleDelete(patient.id)}
-                      className="text-destructive hover:text-destructive"
+                      className="text-destructive hover:text-destructive flex-shrink-0"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

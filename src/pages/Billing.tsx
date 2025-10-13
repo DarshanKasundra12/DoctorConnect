@@ -9,10 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, CreditCard, Search, FileText, Edit, Trash2, Download, Filter, Calendar } from 'lucide-react';
+import { Plus, CreditCard, Search, FileText, Edit, Trash2, Download, Filter, Calendar, FileDown, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { toast } from '@/hooks/use-toast';
+import { downloadInvoicePDF } from '@/components/billing/InvoicePDF';
 
 interface Patient {
   id: string;
@@ -37,10 +38,18 @@ const Billing = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDoctorInfoDialogOpen, setIsDoctorInfoDialogOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
+  const [doctorInfo, setDoctorInfo] = useState({
+    name: 'Dr. John Doe',
+    clinic: 'DoctorConnect Healthcare',
+    address: '123 Medical Center, Healthcare City',
+    phone: '+1 (555) 123-4567',
+    email: 'doctor@healthcare.com'
+  });
   const [formData, setFormData] = useState({
     patient_id: '',
     service_description: '',
@@ -226,6 +235,16 @@ const Billing = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleDownloadPDF = (invoice: Invoice) => {
+    try {
+      downloadInvoicePDF(invoice, doctorInfo);
+      toast({ title: "Success", description: "Invoice PDF downloaded successfully" });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({ title: "Error", description: "Failed to generate PDF", variant: "destructive" });
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const variants = {
       pending: 'secondary',
@@ -285,6 +304,72 @@ const Billing = () => {
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
+          <Dialog open={isDoctorInfoDialogOpen} onOpenChange={setIsDoctorInfoDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Settings className="mr-2 h-4 w-4" />
+                PDF Settings
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>PDF Invoice Settings</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="clinic_name">Clinic Name</Label>
+                  <Input
+                    id="clinic_name"
+                    value={doctorInfo.clinic}
+                    onChange={(e) => setDoctorInfo({...doctorInfo, clinic: e.target.value})}
+                    placeholder="Enter clinic name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="doctor_name">Doctor Name</Label>
+                  <Input
+                    id="doctor_name"
+                    value={doctorInfo.name}
+                    onChange={(e) => setDoctorInfo({...doctorInfo, name: e.target.value})}
+                    placeholder="Enter doctor name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="clinic_address">Address</Label>
+                  <Textarea
+                    id="clinic_address"
+                    value={doctorInfo.address}
+                    onChange={(e) => setDoctorInfo({...doctorInfo, address: e.target.value})}
+                    placeholder="Enter clinic address"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="clinic_phone">Phone</Label>
+                    <Input
+                      id="clinic_phone"
+                      value={doctorInfo.phone}
+                      onChange={(e) => setDoctorInfo({...doctorInfo, phone: e.target.value})}
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="clinic_email">Email</Label>
+                    <Input
+                      id="clinic_email"
+                      type="email"
+                      value={doctorInfo.email}
+                      onChange={(e) => setDoctorInfo({...doctorInfo, email: e.target.value})}
+                      placeholder="Enter email address"
+                    />
+                  </div>
+                </div>
+                <Button onClick={() => setIsDoctorInfoDialogOpen(false)} className="w-full">
+                  Save Settings
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -523,6 +608,14 @@ const Billing = () => {
                   <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDownloadPDF(invoice)}
+                        title="Download PDF"
+                      >
+                        <FileDown className="h-4 w-4" />
+                      </Button>
                       {invoice.status === 'pending' && (
                         <Button
                           size="sm"
@@ -536,12 +629,13 @@ const Billing = () => {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleEdit(invoice)}
+                        title="Edit Invoice"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="ghost">
+                          <Button size="sm" variant="ghost" title="Delete Invoice">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>

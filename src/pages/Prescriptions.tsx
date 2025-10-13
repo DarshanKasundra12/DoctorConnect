@@ -197,20 +197,20 @@ const Prescriptions = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Prescriptions</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Prescriptions</h1>
           <p className="text-muted-foreground">Manage patient prescriptions</p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm}>
+            <Button onClick={resetForm} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               New Prescription
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl mx-4 sm:mx-0 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingPrescription ? 'Edit Prescription' : 'Create New Prescription'}
@@ -237,7 +237,7 @@ const Prescriptions = () => {
                 </Select>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="medication_name">Medication Name</Label>
                   <Input
@@ -258,7 +258,7 @@ const Prescriptions = () => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="frequency">Frequency</Label>
                   <Select 
@@ -312,74 +312,80 @@ const Prescriptions = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            All Prescriptions
-          </CardTitle>
-          <div className="flex items-center space-x-2">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search prescriptions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              All Prescriptions
+            </CardTitle>
+            <div className="flex items-center space-x-2">
+              <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <Input
+                placeholder="Search prescriptions..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="max-w-sm"
+              />
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Patient</TableHead>
-                <TableHead>Medication</TableHead>
-                <TableHead>Dosage</TableHead>
-                <TableHead>Frequency</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredPrescriptions.map((prescription) => (
-                <TableRow key={prescription.id}>
-                  <TableCell>
-                    {new Date(prescription.prescribed_date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{prescription.patients?.full_name}</TableCell>
-                  <TableCell className="font-medium">{prescription.medication_name}</TableCell>
-                  <TableCell>{prescription.dosage}</TableCell>
-                  <TableCell>{prescription.frequency}</TableCell>
-                  <TableCell>{prescription.duration}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleDownloadPDF(prescription)}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleEdit(prescription)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleDelete(prescription.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[100px]">Date</TableHead>
+                  <TableHead className="min-w-[120px]">Patient</TableHead>
+                  <TableHead className="min-w-[150px]">Medication</TableHead>
+                  <TableHead className="min-w-[100px]">Dosage</TableHead>
+                  <TableHead className="min-w-[120px]">Frequency</TableHead>
+                  <TableHead className="min-w-[100px]">Duration</TableHead>
+                  <TableHead className="min-w-[120px]">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredPrescriptions.map((prescription) => (
+                  <TableRow key={prescription.id}>
+                    <TableCell className="whitespace-nowrap">
+                      {new Date(prescription.prescribed_date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="truncate max-w-[120px]">{prescription.patients?.full_name}</TableCell>
+                    <TableCell className="font-medium truncate max-w-[150px]">{prescription.medication_name}</TableCell>
+                    <TableCell className="truncate max-w-[100px]">{prescription.dosage}</TableCell>
+                    <TableCell className="truncate max-w-[120px]">{prescription.frequency}</TableCell>
+                    <TableCell className="truncate max-w-[100px]">{prescription.duration}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDownloadPDF(prescription)}
+                          className="flex-shrink-0"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEdit(prescription)}
+                          className="flex-shrink-0"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDelete(prescription.id)}
+                          className="text-destructive hover:text-destructive flex-shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

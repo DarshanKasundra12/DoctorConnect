@@ -228,13 +228,13 @@ const Settings = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Settings</h1>
           <p className="text-muted-foreground">Manage your account and application preferences</p>
         </div>
         
-        <Button onClick={saveSettings} disabled={loading}>
+        <Button onClick={saveSettings} disabled={loading} className="w-full sm:w-auto">
           <Save className="mr-2 h-4 w-4" />
           {loading ? 'Saving...' : 'Save Changes'}
         </Button>
@@ -249,16 +249,16 @@ const Settings = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <Avatar className="h-20 w-20 flex-shrink-0">
               <AvatarImage src={profile.avatar_url} />
               <AvatarFallback className="text-lg">
                 {profile.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="w-full sm:w-auto">
               <Label htmlFor="avatar-upload" className="cursor-pointer">
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="w-full sm:w-auto">
                   <span>
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Avatar
@@ -310,7 +310,7 @@ const Settings = () => {
           <div>
             <Label className="text-base font-medium">Theme Mode</Label>
             <p className="text-sm text-muted-foreground mb-3">Choose your preferred theme</p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               {[
                 { value: 'light', label: 'Light', icon: Sun },
                 { value: 'dark', label: 'Dark', icon: Moon },
@@ -335,7 +335,7 @@ const Settings = () => {
           <div>
             <Label className="text-base font-medium">Primary Color</Label>
             <p className="text-sm text-muted-foreground mb-3">Choose your app's primary color</p>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {predefinedColors.map((color) => (
                 <Button
                   key={color.value}
@@ -353,13 +353,13 @@ const Settings = () => {
             </div>
             <div className="mt-3">
               <Label htmlFor="custom-color">Custom Color</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Input
                   id="custom-color"
                   type="color"
                   value={settings.primary_color}
                   onChange={(e) => setSettings({ ...settings, primary_color: e.target.value })}
-                  className="w-20 h-10"
+                  className="w-full sm:w-20 h-10"
                 />
                 <Input
                   value={settings.primary_color}
@@ -384,17 +384,17 @@ const Settings = () => {
         <CardContent className="space-y-4">
           <div>
             <Label>Clinic Logo</Label>
-            <div className="flex items-center gap-4 mt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-2">
               {settings.clinic_logo_url && (
                 <img 
                   src={settings.clinic_logo_url} 
                   alt="Clinic Logo" 
-                  className="h-16 w-16 object-cover rounded border"
+                  className="h-16 w-16 object-cover rounded border flex-shrink-0"
                 />
               )}
-              <div>
+              <div className="w-full sm:w-auto">
                 <Label htmlFor="logo-upload" className="cursor-pointer">
-                  <Button variant="outline" asChild>
+                  <Button variant="outline" asChild className="w-full sm:w-auto">
                     <span>
                       <Upload className="mr-2 h-4 w-4" />
                       Upload Logo

@@ -284,9 +284,9 @@ const Calls = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Calls</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Calls</h1>
           <p className="text-muted-foreground">
             Manage patient calls and consultations
           </p>
@@ -294,13 +294,13 @@ const Calls = () => {
         
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="flex items-center gap-2">
+            <Button onClick={resetForm} className="flex items-center gap-2 w-full sm:w-auto">
               <Plus className="h-4 w-4" />
               New Call
             </Button>
           </DialogTrigger>
           
-          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
             <DialogHeader>
               <DialogTitle>
                 {editingCall ? 'Edit Call' : 'New Call'}
@@ -315,34 +315,37 @@ const Calls = () => {
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Step Navigation */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                   <Button
                     type="button"
                     variant={currentStep === 1 ? "default" : "outline"}
                     size="sm"
                     onClick={() => setCurrentStep(1)}
+                    className="text-xs sm:text-sm"
                   >
-                    1. Call Details
+                    <span className="hidden sm:inline">1. </span>Call Details
                   </Button>
                   <Button
                     type="button"
                     variant={currentStep === 2 ? "default" : "outline"}
                     size="sm"
                     onClick={() => setCurrentStep(2)}
+                    className="text-xs sm:text-sm"
                   >
-                    2. Patient Info
+                    <span className="hidden sm:inline">2. </span>Patient Info
                   </Button>
                   <Button
                     type="button"
                     variant={currentStep === 3 ? "default" : "outline"}
                     size="sm"
                     onClick={() => setCurrentStep(3)}
+                    className="text-xs sm:text-sm"
                   >
-                    3. Outcome
+                    <span className="hidden sm:inline">3. </span>Outcome
                   </Button>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground text-center sm:text-right">
                   Step {currentStep} of 3
                 </div>
               </div>
@@ -468,7 +471,7 @@ const Calls = () => {
                   {formData.call_outcome === 'appointment_scheduled' && (
                     <div className="space-y-4 p-4 border rounded-lg">
                       <h4 className="font-medium">Schedule Appointment</h4>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="appointment_date">Date</Label>
                           <Input
@@ -519,20 +522,20 @@ const Calls = () => {
                 </div>
               )}
 
-              <DialogFooter className="flex justify-between">
-                <div className="flex gap-2">
+              <DialogFooter className="flex flex-col sm:flex-row justify-between gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                   {currentStep > 1 && (
-                    <Button type="button" variant="outline" onClick={() => setCurrentStep(currentStep - 1)}>
+                    <Button type="button" variant="outline" onClick={() => setCurrentStep(currentStep - 1)} className="w-full sm:w-auto">
                       Previous
                     </Button>
                   )}
                   {currentStep < 3 && (
-                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+                    <Button type="button" onClick={() => setCurrentStep(currentStep + 1)} className="w-full sm:w-auto">
                       Next
                     </Button>
                   )}
                 </div>
-                <Button type="submit">
+                <Button type="submit" className="w-full sm:w-auto">
                   {editingCall ? 'Update' : 'Complete'} Call
                 </Button>
               </DialogFooter>
@@ -542,7 +545,7 @@ const Calls = () => {
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Calls</CardTitle>
@@ -597,10 +600,10 @@ const Calls = () => {
           ) : (
             <div className="space-y-4">
               {calls.map((call) => (
-                <div key={call.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="text-center min-w-0">
-                      <div className="flex items-center gap-2">
+                <div key={call.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 flex-1 min-w-0">
+                    <div className="text-center sm:text-left min-w-0">
+                      <div className="flex items-center justify-center sm:justify-start gap-2">
                         {getStatusIcon(call.status)}
                         <p className="text-sm font-medium">
                           {new Date(call.created_at).toLocaleDateString()}
@@ -613,7 +616,7 @@ const Calls = () => {
                     
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
+                        <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <p className="font-medium truncate">
                           {call.patients?.full_name || 'Anonymous Call'}
                         </p>
@@ -622,7 +625,7 @@ const Calls = () => {
                         {call.call_type.replace('_', ' ')}
                       </p>
                       {call.call_notes && (
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                           {call.call_notes}
                         </p>
                       )}
@@ -633,8 +636,8 @@ const Calls = () => {
                       )}
                     </div>
                     
-                    <div className="flex flex-col items-end gap-2">
-                      <Badge variant={getStatusColor(call.status)}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant={getStatusColor(call.status)} className="text-xs">
                         {call.status}
                       </Badge>
                       {call.call_outcome && (
@@ -645,17 +648,18 @@ const Calls = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-end sm:justify-start space-x-2">
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={() => openEditDialog(call)}
+                      className="flex-shrink-0"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="flex-shrink-0">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </AlertDialogTrigger>
