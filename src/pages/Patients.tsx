@@ -184,52 +184,109 @@ const Patients = () => {
               )}
             </div>
           ) : (
-            <div className="grid gap-4">
-              {filteredPatients.map((patient) => (
-                <div key={patient.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-primary font-semibold text-lg">
-                        {patient.full_name.charAt(0).toUpperCase()}
-                      </span>
+            <>
+              {/* Desktop view */}
+              <div className="hidden sm:grid gap-4">
+                {filteredPatients.map((patient) => (
+                  <div key={patient.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center space-x-4">
+                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-primary font-semibold text-lg">
+                          {patient.full_name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-semibold">{patient.full_name}</h3>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          {patient.email && <span>{patient.email}</span>}
+                          {patient.phone && <span>{patient.phone}</span>}
+                          {patient.gender && (
+                            <Badge variant="outline">
+                              {patient.gender}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Registered: {new Date(patient.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
                     
-                    <div>
-                      <h3 className="font-semibold">{patient.full_name}</h3>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        {patient.email && <span>{patient.email}</span>}
-                        {patient.phone && <span>{patient.phone}</span>}
-                        {patient.gender && (
-                          <Badge variant="outline">
-                            {patient.gender}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Registered: {new Date(patient.created_at).toLocaleDateString()}
-                      </p>
+                    <div className="flex items-center space-x-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleEdit(patient)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleDelete(patient.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit(patient)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleDelete(patient.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                ))}
+              </div>
+
+              {/* Mobile view */}
+              <div className="block sm:hidden space-y-3">
+                {filteredPatients.map((patient) => (
+                  <div key={patient.id} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span className="text-primary font-semibold">
+                              {patient.full_name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-semibold truncate">{patient.full_name}</h3>
+                            <p className="text-xs text-muted-foreground">
+                              Registered: {new Date(patient.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          {patient.email && (
+                            <p className="text-sm text-muted-foreground truncate">{patient.email}</p>
+                          )}
+                          {patient.phone && (
+                            <p className="text-sm text-muted-foreground">{patient.phone}</p>
+                          )}
+                          {patient.gender && (
+                            <Badge variant="outline" className="text-xs">
+                              {patient.gender}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <Button variant="outline" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleEdit(patient)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleDelete(patient.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

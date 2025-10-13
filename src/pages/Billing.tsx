@@ -9,10 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, CreditCard, Search, FileText, Edit, Trash2, Download, Filter, Calendar } from 'lucide-react';
+import { Plus, CreditCard, Search, FileText, Edit, Trash2, Download, Filter, Calendar, FileDown, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { toast } from '@/hooks/use-toast';
+import { downloadInvoicePDF } from '@/components/billing/InvoicePDF';
 
 interface Patient {
   id: string;
@@ -41,6 +42,14 @@ const Billing = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
+  const [isDoctorInfoDialogOpen, setIsDoctorInfoDialogOpen] = useState(false);
+  const [doctorInfo, setDoctorInfo] = useState({
+    name: 'Dr. John Doe',
+    clinic: 'DoctorConnect Healthcare',
+    address: '123 Medical Center, Healthcare City',
+    phone: '+1 (555) 123-4567',
+    email: 'doctor@healthcare.com'
+  });
   const [formData, setFormData] = useState({
     patient_id: '',
     service_description: '',
@@ -202,6 +211,16 @@ const Billing = () => {
     }
   };
 
+  const handleDownloadPDF = (invoice: Invoice) => {
+    try {
+      downloadInvoicePDF(invoice, doctorInfo);
+      toast({ title: "Success", description: "Invoice PDF downloaded successfully" });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({ title: "Error", description: "Failed to generate PDF", variant: "destructive" });
+    }
+  };
+
   const exportToCSV = () => {
     const csvContent = [
       ['Invoice #', 'Patient', 'Service', 'Amount', 'Due Date', 'Status', 'Created At'],
@@ -274,25 +293,86 @@ const Billing = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Billing & Invoices</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Billing & Invoices</h1>
           <p className="text-muted-foreground">Manage invoices and track payments</p>
         </div>
         
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={exportToCSV}>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Dialog open={isDoctorInfoDialogOpen} onOpenChange={setIsDoctorInfoDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full sm:w-auto">
+                <Settings className="mr-2 h-4 w-4" />
+                PDF Settings
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>PDF Invoice Settings</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="doctor_name">Doctor Name</Label>
+                  <Input
+                    id="doctor_name"
+                    value={doctorInfo.name}
+                    onChange={(e) => setDoctorInfo({...doctorInfo, name: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="clinic_name">Clinic Name</Label>
+                  <Input
+                    id="clinic_name"
+                    value={doctorInfo.clinic}
+                    onChange={(e) => setDoctorInfo({...doctorInfo, clinic: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="clinic_address">Address</Label>
+                  <Textarea
+                    id="clinic_address"
+                    value={doctorInfo.address}
+                    onChange={(e) => setDoctorInfo({...doctorInfo, address: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      value={doctorInfo.phone}
+                      onChange={(e) => setDoctorInfo({...doctorInfo, phone: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={doctorInfo.email}
+                      onChange={(e) => setDoctorInfo({...doctorInfo, email: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <Button onClick={() => setIsDoctorInfoDialogOpen(false)} className="w-full">
+                  Save Settings
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Button variant="outline" onClick={exportToCSV} className="w-full sm:w-auto">
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 New Invoice
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
               <DialogHeader>
                 <DialogTitle>Create New Invoice</DialogTitle>
               </DialogHeader>
@@ -328,7 +408,7 @@ const Billing = () => {
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="amount">Amount (₹)</Label>
                     <Input
@@ -359,7 +439,7 @@ const Billing = () => {
 
           {/* Edit Invoice Dialog */}
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
               <DialogHeader>
                 <DialogTitle>Edit Invoice</DialogTitle>
               </DialogHeader>
@@ -395,7 +475,7 @@ const Billing = () => {
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="edit_amount">Amount (₹)</Label>
                     <Input
@@ -427,7 +507,7 @@ const Billing = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Invoices</CardTitle>
@@ -465,8 +545,8 @@ const Billing = () => {
             <CreditCard className="h-5 w-5" />
             All Invoices
           </CardTitle>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center space-x-2 flex-1">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search invoices..."
@@ -475,97 +555,192 @@ const Billing = () => {
                 className="max-w-sm"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
-                <SelectItem value="overdue">Overdue</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Time</SelectItem>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="week">This Week</SelectItem>
-                <SelectItem value="month">This Month</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="overdue">Overdue</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={dateFilter} onValueChange={setDateFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Time</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice #</TableHead>
-                <TableHead>Patient</TableHead>
-                <TableHead>Service</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredInvoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                  <TableCell>{invoice.patients?.full_name}</TableCell>
-                  <TableCell className="max-w-xs truncate">{invoice.service_description}</TableCell>
-                  <TableCell>₹{invoice.amount.toFixed(2)}</TableCell>
-                  <TableCell>{new Date(invoice.due_date).toLocaleDateString()}</TableCell>
-                  <TableCell>{getStatusBadge(invoice.status)}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {invoice.status === 'pending' && (
+          {/* Desktop/Table view */}
+          <div className="hidden sm:block overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[120px]">Invoice #</TableHead>
+                  <TableHead className="min-w-[120px]">Patient</TableHead>
+                  <TableHead className="min-w-[150px]">Service</TableHead>
+                  <TableHead className="min-w-[100px]">Amount</TableHead>
+                  <TableHead className="min-w-[100px]">Due Date</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="min-w-[200px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredInvoices.map((invoice) => (
+                  <TableRow key={invoice.id}>
+                    <TableCell className="font-medium whitespace-nowrap">{invoice.invoice_number}</TableCell>
+                    <TableCell className="truncate max-w-[120px]">{invoice.patients?.full_name}</TableCell>
+                    <TableCell className="max-w-xs truncate">{invoice.service_description}</TableCell>
+                    <TableCell className="whitespace-nowrap">₹{invoice.amount.toFixed(2)}</TableCell>
+                    <TableCell className="whitespace-nowrap">{new Date(invoice.due_date).toLocaleDateString()}</TableCell>
+                    <TableCell>{getStatusBadge(invoice.status)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => updateInvoiceStatus(invoice.id, 'paid')}
+                          onClick={() => handleDownloadPDF(invoice)}
+                          title="Download PDF"
                         >
-                          Mark Paid
+                          <FileDown className="h-4 w-4" />
                         </Button>
-                      )}
+                        {invoice.status === 'pending' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateInvoiceStatus(invoice.id, 'paid')}
+                            className="flex-shrink-0"
+                          >
+                            Mark Paid
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEdit(invoice)}
+                          className="flex-shrink-0"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="ghost" className="flex-shrink-0">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Invoice</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete invoice {invoice.invoice_number}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteInvoice(invoice.id)}>
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile/Card view */}
+          <div className="block sm:hidden space-y-3">
+            {filteredInvoices.map((invoice) => (
+              <div key={invoice.id} className="p-4 border rounded-lg">
+                <div className="flex justify-between items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium truncate">{invoice.invoice_number}</h3>
+                      {getStatusBadge(invoice.status)}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground truncate">
+                        <strong>Patient:</strong> {invoice.patients?.full_name || 'Unknown'}
+                      </p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        <strong>Service:</strong> {invoice.service_description}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Amount:</strong> ₹{invoice.amount.toFixed(2)}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Due:</strong> {new Date(invoice.due_date).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Created: {new Date(invoice.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDownloadPDF(invoice)}
+                      title="Download PDF"
+                    >
+                      <FileDown className="h-4 w-4" />
+                    </Button>
+                    {invoice.status === 'pending' && (
                       <Button
                         size="sm"
-                        variant="ghost"
-                        onClick={() => handleEdit(invoice)}
+                        variant="outline"
+                        onClick={() => updateInvoiceStatus(invoice.id, 'paid')}
                       >
-                        <Edit className="h-4 w-4" />
+                        Mark Paid
                       </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="ghost">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Invoice</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete invoice {invoice.invoice_number}? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteInvoice(invoice.id)}>
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleEdit(invoice)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="ghost">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Invoice</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete invoice {invoice.invoice_number}? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteInvoice(invoice.id)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

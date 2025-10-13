@@ -284,21 +284,21 @@ const Teleconsult = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Teleconsultation</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Teleconsultation</h1>
           <p className="text-muted-foreground">Manage video consultations with patients</p>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Dialog open={isInstantMeetingDialogOpen} onOpenChange={setIsInstantMeetingDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="w-full sm:w-auto">
                 <Video className="mr-2 h-4 w-4" />
                 Start Instant Meeting
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
               <DialogHeader>
                 <DialogTitle>Start Instant Meeting</DialogTitle>
               </DialogHeader>
@@ -332,12 +332,12 @@ const Teleconsult = () => {
 
           <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Schedule Meeting
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
               <DialogHeader>
                 <DialogTitle>Schedule New Meeting</DialogTitle>
               </DialogHeader>
@@ -362,7 +362,7 @@ const Teleconsult = () => {
                   </Select>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="scheduled_date">Date</Label>
                     <Input
@@ -419,14 +419,14 @@ const Teleconsult = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             <Input
               placeholder="Enter Meeting ID to join..."
               value={joinMeetingId}
               onChange={(e) => setJoinMeetingId(e.target.value)}
-              className="flex-1"
+              className="flex-1 w-full sm:w-auto"
             />
-            <Button onClick={joinMeetingById} disabled={!joinMeetingId.trim()}>
+            <Button onClick={joinMeetingById} disabled={!joinMeetingId.trim()} className="w-full sm:w-auto">
               <ExternalLink className="mr-2 h-4 w-4" />
               Join Meeting
             </Button>
@@ -435,7 +435,7 @@ const Teleconsult = () => {
       </Card>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Meetings</CardTitle>
@@ -476,6 +476,8 @@ const Teleconsult = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Desktop/Table view */}
+          <div className="hidden sm:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -573,12 +575,99 @@ const Teleconsult = () => {
               ))}
             </TableBody>
           </Table>
+          </div>
+
+          {/* Mobile/Card view */}
+          <div className="block sm:hidden space-y-4">
+            {meetings.map((meeting) => (
+              <div key={meeting.id} className="p-4 border rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+                <div className="space-y-3">
+                  {/* Header with patient name and status */}
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-base truncate">{meeting.patients?.full_name || 'Anonymous Patient'}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        {getStatusBadge(meeting.status)}
+                        <span className="text-xs text-muted-foreground">• {meeting.duration} min</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Meeting details */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span>{new Date(meeting.scheduled_date).toLocaleDateString()}</span>
+                      <Clock className="h-4 w-4 text-muted-foreground ml-2" />
+                      <span>{new Date(meeting.scheduled_date).toLocaleTimeString()}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm">
+                      <Video className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-mono text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                        {meeting.meeting_id}
+                      </span>
+                    </div>
+
+                    {meeting.notes && (
+                      <div className="text-sm text-muted-foreground bg-white/50 dark:bg-gray-800/50 p-2 rounded border">
+                        <strong>Notes:</strong> {meeting.notes}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex flex-wrap gap-2 pt-2 border-t">
+                    <Button size="sm" variant="default" onClick={() => joinMeeting(meeting.meeting_url)} className="flex-1 min-w-0">
+                      <Video className="h-4 w-4 mr-1" />
+                      Join
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => openNotesDialog(meeting)} className="flex-shrink-0">
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => copyMeetingLink(meeting.meeting_url)} className="flex-shrink-0">
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => shareMeetingLink(meeting.meeting_url, meeting.patients?.full_name || 'Patient')} className="flex-shrink-0">
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                    {meeting.status === 'scheduled' && (
+                      <Button size="sm" variant="outline" onClick={() => sendNotification(meeting)} className="flex-shrink-0">
+                        <Bell className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="flex-shrink-0 text-destructive hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Meeting</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this meeting? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteMeeting(meeting.id)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
       {/* Meeting Notes Dialog */}
       <Dialog open={isNotesDialogOpen} onOpenChange={setIsNotesDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto mx-4 sm:mx-0">
           <DialogHeader>
             <DialogTitle>Meeting Notes</DialogTitle>
           </DialogHeader>
@@ -600,11 +689,11 @@ const Teleconsult = () => {
                 className="min-h-[200px]"
               />
             </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsNotesDialogOpen(false)}>
+            <div className="flex flex-col sm:flex-row justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsNotesDialogOpen(false)} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button onClick={saveMeetingNotes}>
+              <Button onClick={saveMeetingNotes} className="w-full sm:w-auto">
                 Save Notes
               </Button>
             </div>

@@ -327,6 +327,8 @@ const Prescriptions = () => {
           </div>
         </CardHeader>
         <CardContent>
+          {/* Desktop/Table view */}
+          <div className="hidden sm:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -380,6 +382,36 @@ const Prescriptions = () => {
               ))}
             </TableBody>
           </Table>
+          </div>
+
+          {/* Mobile/Card view */}
+          <div className="block sm:hidden space-y-3">
+            {filteredPrescriptions.map((p) => (
+              <div key={p.id} className="p-4 border rounded-lg">
+                <div className="flex justify-between items-start gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{p.medication_name}</div>
+                    <div className="text-xs text-muted-foreground truncate">{p.patients?.full_name}</div>
+                    <div className="text-xs text-muted-foreground">{new Date(p.prescribed_date).toLocaleDateString()}</div>
+                    <div className="text-xs text-muted-foreground">Dosage: {p.dosage}</div>
+                    <div className="text-xs text-muted-foreground">Frequency: {p.frequency}</div>
+                    <div className="text-xs text-muted-foreground">Duration: {p.duration}</div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Button size="sm" variant="outline" onClick={() => handleDownloadPDF(p)}>
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleEdit(p)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleDelete(p.id)} className="text-destructive hover:text-destructive">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

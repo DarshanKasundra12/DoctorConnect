@@ -595,89 +595,172 @@ const Calls = () => {
               </Button>
             </div>
           ) : (
-            <div className="space-y-4">
-              {calls.map((call) => (
-                <div key={call.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="text-center min-w-0">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(call.status)}
-                        <p className="text-sm font-medium">
-                          {new Date(call.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(call.created_at).toLocaleTimeString()}
-                      </p>
-                    </div>
-                    
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <p className="font-medium truncate">
-                          {call.patients?.full_name || 'Anonymous Call'}
-                        </p>
-                      </div>
-                      <p className="text-sm text-muted-foreground capitalize">
-                        {call.call_type.replace('_', ' ')}
-                      </p>
-                      {call.call_notes && (
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                          {call.call_notes}
-                        </p>
-                      )}
-                      {call.call_duration && (
+            <>
+              {/* Desktop view */}
+              <div className="hidden sm:space-y-4">
+                {calls.map((call) => (
+                  <div key={call.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="text-center min-w-0">
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(call.status)}
+                          <p className="text-sm font-medium">
+                            {new Date(call.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
                         <p className="text-xs text-muted-foreground">
-                          Duration: {call.call_duration} minutes
+                          {new Date(call.created_at).toLocaleTimeString()}
                         </p>
-                      )}
+                      </div>
+                      
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <p className="font-medium truncate">
+                            {call.patients?.full_name || 'Anonymous Call'}
+                          </p>
+                        </div>
+                        <p className="text-sm text-muted-foreground capitalize">
+                          {call.call_type.replace('_', ' ')}
+                        </p>
+                        {call.call_notes && (
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
+                            {call.call_notes}
+                          </p>
+                        )}
+                        {call.call_duration && (
+                          <p className="text-xs text-muted-foreground">
+                            Duration: {call.call_duration} minutes
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge variant={getStatusColor(call.status)}>
+                          {call.status}
+                        </Badge>
+                        {call.call_outcome && (
+                          <Badge variant="outline" className="text-xs">
+                            {call.call_outcome.replace('_', ' ')}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     
-                    <div className="flex flex-col items-end gap-2">
-                      <Badge variant={getStatusColor(call.status)}>
-                        {call.status}
-                      </Badge>
-                      {call.call_outcome && (
-                        <Badge variant="outline" className="text-xs">
-                          {call.call_outcome.replace('_', ' ')}
-                        </Badge>
-                      )}
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => openEditDialog(call)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Call</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this call? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(call.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => openEditDialog(call)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <Trash2 className="h-4 w-4" />
+                ))}
+              </div>
+
+              {/* Mobile view */}
+              <div className="block sm:hidden space-y-3">
+                {calls.map((call) => (
+                  <div key={call.id} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          {getStatusIcon(call.status)}
+                          <p className="text-sm font-medium">
+                            {new Date(call.created_at).toLocaleDateString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(call.created_at).toLocaleTimeString()}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <p className="font-medium truncate">
+                            {call.patients?.full_name || 'Anonymous Call'}
+                          </p>
+                        </div>
+                        <p className="text-sm text-muted-foreground capitalize mb-1">
+                          {call.call_type.replace('_', ' ')}
+                        </p>
+                        {call.call_notes && (
+                          <p className="text-xs text-muted-foreground line-clamp-2">
+                            {call.call_notes}
+                          </p>
+                        )}
+                        {call.call_duration && (
+                          <p className="text-xs text-muted-foreground">
+                            Duration: {call.call_duration} minutes
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          <Badge variant={getStatusColor(call.status)} className="text-xs">
+                            {call.status}
+                          </Badge>
+                          {call.call_outcome && (
+                            <Badge variant="outline" className="text-xs">
+                              {call.call_outcome.replace('_', ' ')}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => openEditDialog(call)}
+                        >
+                          <Edit className="h-4 w-4" />
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Call</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete this call? This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(call.id)}>
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Call</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this call? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(call.id)}>
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
