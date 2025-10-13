@@ -284,21 +284,21 @@ const Teleconsult = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Teleconsultation</h1>
+          <h1 className="text-3xl font-bold">Teleconsultation</h1>
           <p className="text-muted-foreground">Manage video consultations with patients</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex gap-2">
           <Dialog open={isInstantMeetingDialogOpen} onOpenChange={setIsInstantMeetingDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-full sm:w-auto">
+              <Button variant="outline">
                 <Video className="mr-2 h-4 w-4" />
                 Start Instant Meeting
               </Button>
             </DialogTrigger>
-            <DialogContent className="mx-4 sm:mx-0">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Start Instant Meeting</DialogTitle>
               </DialogHeader>
@@ -332,12 +332,12 @@ const Teleconsult = () => {
 
           <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full sm:w-auto">
+              <Button>
                 <Plus className="mr-2 h-4 w-4" />
                 Schedule Meeting
               </Button>
             </DialogTrigger>
-            <DialogContent className="mx-4 sm:mx-0">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Schedule New Meeting</DialogTitle>
               </DialogHeader>
@@ -362,7 +362,7 @@ const Teleconsult = () => {
                   </Select>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="scheduled_date">Date</Label>
                     <Input
@@ -419,14 +419,14 @@ const Teleconsult = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex items-center gap-4">
             <Input
               placeholder="Enter Meeting ID to join..."
               value={joinMeetingId}
               onChange={(e) => setJoinMeetingId(e.target.value)}
-              className="flex-1 w-full sm:w-auto"
+              className="flex-1"
             />
-            <Button onClick={joinMeetingById} disabled={!joinMeetingId.trim()} className="w-full sm:w-auto">
+            <Button onClick={joinMeetingById} disabled={!joinMeetingId.trim()}>
               <ExternalLink className="mr-2 h-4 w-4" />
               Join Meeting
             </Button>
@@ -435,7 +435,7 @@ const Teleconsult = () => {
       </Card>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Meetings</CardTitle>
@@ -476,110 +476,103 @@ const Teleconsult = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[150px]">Date & Time</TableHead>
-                  <TableHead className="min-w-[120px]">Patient</TableHead>
-                  <TableHead className="min-w-[80px]">Duration</TableHead>
-                  <TableHead className="min-w-[120px]">Meeting ID</TableHead>
-                  <TableHead className="min-w-[100px]">Status</TableHead>
-                  <TableHead className="min-w-[150px]">Notes</TableHead>
-                  <TableHead className="min-w-[200px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {meetings.map((meeting) => (
-                  <TableRow key={meeting.id}>
-                    <TableCell className="whitespace-nowrap">
-                      {new Date(meeting.scheduled_date).toLocaleString()}
-                    </TableCell>
-                    <TableCell className="truncate max-w-[120px]">{meeting.patients?.full_name}</TableCell>
-                    <TableCell>{meeting.duration} min</TableCell>
-                    <TableCell className="font-mono text-sm truncate max-w-[120px]">{meeting.meeting_id}</TableCell>
-                    <TableCell>{getStatusBadge(meeting.status)}</TableCell>
-                    <TableCell className="max-w-[150px]">
-                      {meeting.notes ? (
-                        <span className="text-sm text-muted-foreground truncate block">
-                          {meeting.notes}
-                        </span>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">No notes</span>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date & Time</TableHead>
+                <TableHead>Patient</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Meeting ID</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Notes</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {meetings.map((meeting) => (
+                <TableRow key={meeting.id}>
+                  <TableCell>
+                    {new Date(meeting.scheduled_date).toLocaleString()}
+                  </TableCell>
+                  <TableCell>{meeting.patients?.full_name}</TableCell>
+                  <TableCell>{meeting.duration} min</TableCell>
+                  <TableCell className="font-mono text-sm">{meeting.meeting_id}</TableCell>
+                  <TableCell>{getStatusBadge(meeting.status)}</TableCell>
+                  <TableCell className="max-w-xs">
+                    {meeting.notes ? (
+                      <span className="text-sm text-muted-foreground truncate block">
+                        {meeting.notes}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No notes</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => joinMeeting(meeting.meeting_url)}
+                      >
+                        <Video className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => openNotesDialog(meeting)}
+                      >
+                        <FileText className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => copyMeetingLink(meeting.meeting_url)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => shareMeetingLink(meeting.meeting_url, meeting.patients?.full_name || 'Patient')}
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                      {meeting.status === 'scheduled' && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => sendNotification(meeting)}
+                        >
+                          <Bell className="h-4 w-4" />
+                        </Button>
                       )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => joinMeeting(meeting.meeting_url)}
-                          className="flex-shrink-0"
-                        >
-                          <Video className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => openNotesDialog(meeting)}
-                          className="flex-shrink-0"
-                        >
-                          <FileText className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => copyMeetingLink(meeting.meeting_url)}
-                          className="flex-shrink-0"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => shareMeetingLink(meeting.meeting_url, meeting.patients?.full_name || 'Patient')}
-                          className="flex-shrink-0"
-                        >
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                        {meeting.status === 'scheduled' && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => sendNotification(meeting)}
-                            className="flex-shrink-0"
-                          >
-                            <Bell className="h-4 w-4" />
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="ghost">
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                        )}
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="ghost" className="flex-shrink-0">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Meeting</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete this meeting? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteMeeting(meeting.id)}>
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Meeting</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this meeting? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteMeeting(meeting.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
