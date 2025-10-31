@@ -1,11 +1,11 @@
-# 🏥 Vita Hub Pro
+# 🏥 DoctorConnect
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![React](https://img.shields.io/badge/React-18-61dafb)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 
-A modern, feature-rich healthcare management platform built for the digital age. Vita Hub Pro streamlines medical practice operations with an intuitive interface for managing patients, appointments, prescriptions, and virtual consultations.
+A modern, feature-rich healthcare management platform built for the digital age. DoctorConnect streamlines medical practice operations with an intuitive interface for managing patients, appointments, prescriptions, and virtual consultations.
 
 ## ✨ Key Features
 
@@ -118,8 +118,8 @@ npm run dev
 1. Clone and setup:
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd vita-hub-pro
+git clone https://github.com/DarshanKasundra12/DoctorConnect.git
+cd DoctorConnect
 
 # Install dependencies
 pnpm install
@@ -148,7 +148,7 @@ Visit `http://localhost:5173` to see your application running.
 ## 📁 Project Structure
 
 ```
-vita-hub-pro/
+DoctorConnect/
 ├── src/
 │   ├── components/        # Reusable UI components
 │   │   ├── auth/         # Authentication components
@@ -186,6 +186,6 @@ We welcome contributions! Please follow these steps:
 
 ## 📝 License
 
-Copyright © 2025 Vita Hub Pro. All rights reserved.
+Copyright © 2025 DoctorConnect. All rights reserved.
 
 This software is proprietary and confidential. Unauthorized copying, modification, distribution, or use of this software, via any medium, is strictly prohibited.
