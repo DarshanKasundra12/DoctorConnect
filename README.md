@@ -1,16 +1,58 @@
-# Welcome to your Lovable project
+# 🏥 Vita Hub Pro
 
-## Project info
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-Proprietary-red)
+![React](https://img.shields.io/badge/React-18-61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 
-**URL**: https://lovable.dev/projects/66732562-27d1-4e9f-8edf-d1a3b9e5140a
+A modern, feature-rich healthcare management platform built for the digital age. Vita Hub Pro streamlines medical practice operations with an intuitive interface for managing patients, appointments, prescriptions, and virtual consultations.
 
-## How can I edit this code?
+## ✨ Key Features
 
-There are several ways of editing your application.
+### For Healthcare Providers
+- 🏥 **Smart Patient Management**
+  - Comprehensive patient profiles
+  - Medical history tracking
+  - Document management
+  - Custom note templates
 
-**Use Lovable**
+- 📅 **Advanced Appointment System**
+  - Real-time scheduling
+  - Automated reminders
+  - Calendar integrations
+  - Recurring appointments
+  - Waitlist management
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/66732562-27d1-4e9f-8edf-d1a3b9e5140a) and start prompting.
+- 📝 **Digital Prescriptions**
+  - Electronic prescription generation
+  - Medicine database integration
+  - Dosage tracking
+  - Prescription history
+  - Digital signature support
+
+- 🎥 **Integrated Teleconsultation**
+  - HD video consultations
+  - Screen sharing
+  - Chat functionality
+  - Recording capabilities
+  - Virtual waiting room
+
+### Practice Management
+- 💰 **Smart Billing & Invoicing**
+  - Automated invoice generation
+  - Payment tracking
+  - Insurance processing
+  - Financial reporting
+  - Multiple payment methods
+
+- 📊 **Analytics Dashboard**
+  - Practice insights
+  - Patient demographics
+  - Revenue analytics
+  - Appointment statistics
+  - Custom reports
+
+## Getting Started
 
 Changes made via Lovable will be committed automatically to this repo.
 
@@ -36,38 +78,114 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🛠️ Technology Stack
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Frontend
+- ⚛️ **React 18** - Modern UI development
+- 🔷 **TypeScript 5.0** - Type-safe development
+- ⚡ **Vite** - Next-gen frontend tooling
+- 🎨 **shadcn/ui** - Pre-built accessible components
+- 💨 **Tailwind CSS** - Utility-first styling
+- 📱 **Responsive Design** - Mobile-first approach
 
-**Use GitHub Codespaces**
+### Backend & Database
+- 🔥 **Supabase**
+  - Real-time database
+  - Authentication
+  - Storage
+  - Serverless Functions
+  - Row Level Security
+- 🔒 **End-to-end encryption** for sensitive data
+- 🌐 **RESTful APIs** with TypeScript types
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### DevOps & Tools
+- 📦 **pnpm** - Fast, disk space efficient package manager
+- 🧪 **Vitest** - Unit testing
+- 📝 **ESLint** - Code quality
+- 💅 **Prettier** - Code formatting
+- 🔄 **GitHub Actions** - CI/CD pipeline
 
-## What technologies are used for this project?
+## 🚀 Quick Start
 
-This project is built with:
+### Prerequisites
+- Node.js 18+ 
+- pnpm 8+ 
+- Supabase CLI
+- Git
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Installation Steps
 
-## How can I deploy this project?
+1. Clone and setup:
+```bash
+# Clone the repository
+git clone <repository-url>
+cd vita-hub-pro
 
-Simply open [Lovable](https://lovable.dev/projects/66732562-27d1-4e9f-8edf-d1a3b9e5140a) and click on Share -> Publish.
+# Install dependencies
+pnpm install
 
-## Can I connect a custom domain to my Lovable project?
+# Setup environment variables
+cp .env.example .env
+```
 
-Yes, you can!
+2. Configure Supabase:
+```bash
+# Initialize Supabase
+supabase init
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Start local Supabase
+supabase start
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+3. Run development server:
+```bash
+# Start the application
+pnpm dev
+```
+
+Visit `http://localhost:5173` to see your application running.
+
+## 📁 Project Structure
+
+```
+vita-hub-pro/
+├── src/
+│   ├── components/        # Reusable UI components
+│   │   ├── auth/         # Authentication components
+│   │   ├── billing/      # Billing & invoice components
+│   │   ├── layout/       # Layout components
+│   │   ├── patients/     # Patient management
+│   │   ├── prescriptions/# Prescription components
+│   │   └── ui/          # Base UI components
+│   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Utility functions
+│   ├── pages/           # Application routes
+│   └── types/           # TypeScript definitions
+├── supabase/
+│   ├── migrations/      # Database migrations
+│   └── functions/       # Edge functions
+└── public/             # Static assets
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/AmazingFeature`
+3. Commit your changes: `git commit -m 'Add some AmazingFeature'`
+4. Push to the branch: `git push origin feature/AmazingFeature`
+5. Open a Pull Request
+
+### Code Style
+
+- Follow the TypeScript style guide
+- Write meaningful commit messages
+- Add appropriate documentation
+- Include tests for new features
+
+## 📝 License
+
+Copyright © 2025 Vita Hub Pro. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, modification, distribution, or use of this software, via any medium, is strictly prohibited.
